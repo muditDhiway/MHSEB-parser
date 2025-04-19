@@ -15,7 +15,7 @@ HSC_FIELD_WIDTHS = [
     ("sub5", 2), ("mark5", 3),
     ("sub6", 2), ("mark6", 3),
     ("sub7", 2), ("mark7", 3),
-    ("Sub8", 2), ("mark8", 3),
+    ("sub8", 2), ("mark8", 3),
     ("result", 3),
     ("outof", 3),
     ("sign", 1),
@@ -38,6 +38,139 @@ def parse_line_hsc(line: str) -> dict:
         record[field] = value.strip()  # remove padding
         index += width
     return record
+
+def whitespace_name_generation_hsc(line: str) -> str:
+    div = line[0:1]
+    sch = line[1:8]
+    seat = line[8:15]
+    output = div + " " + sch + " " + seat + " "
+
+    name = line[15:80]
+    for i in range(len(name)):
+        if i == len(name) - 2 and name[i+1] == " ":
+            name_ends = i
+            break
+
+        if i == len(name) - 1:
+            name_ends = i
+            break
+
+        if name[i+1] == " " and name[i+2] == " ":  
+            name_ends = i + 1
+            break
+    name = name[:name_ends]
+    output += name + " "
+
+    sub1 = line[80:82]
+    if sub1 != "  ":
+        output += sub1 + " "
+        
+    mark1 = line[82:85]
+    if mark1 != "   ":
+        output += mark1 + " "
+
+    sub2 = line[85:87]
+    if sub2 != "  ":
+        output += sub2 + " "
+
+    mark2 = line[87:90]
+    if mark2 != "   ":
+        output += mark2 + " "
+
+    sub3 = line[90:92]
+    if sub3 != "  ":
+        output += sub3 + " "
+
+    mark3 = line[92:95]
+    if mark3 != "   ":
+        output += mark3 + " "
+
+    sub4 = line[95:97]
+    if sub4 != "  ":
+        output += sub4 + " "
+
+    mark4 = line[97:100]
+    if mark4 != "   ":
+        output += mark4 + " "
+
+    sub5 = line[100:102]
+    if sub5 != "  ":
+        output += sub5 + " "
+
+    mark5 = line[102:105]
+    if mark5 != "   ":
+        output += mark5 + " "
+
+    sub6 = line[105:107]
+    if sub6 != "  ":
+        output += sub6 + " "
+
+    mark6 = line[107:110]
+    if mark6 != "   ":
+        output += mark6 + " "
+
+    sub7 = line[110:112]
+    if sub7 != "  ":
+        output += sub7 + " "
+
+    mark7 = line[112:115]
+    if mark7 != "   ":
+        output += mark7 + " "
+
+    sub8 = line[115:117]
+    if sub8 != "  ":
+        output += sub8 + " "
+
+    mark8 = line[117:120]
+    if mark8 != "   ":
+        output += mark8 + " "
+
+    result = line[120:123]
+    if result != "   ":
+        output += result + " "
+
+    outof = line[123:126]
+    if outof != "   ":
+        output += outof + " "
+
+    sign = line[126:127]
+    if sign != " ":
+        output += sign + " "
+
+    grace = line[127:129]
+    if grace != "  ":
+        output += grace + " "
+
+    course = line[129:130]
+    if course != " ":
+        output += course + " "
+
+    mother = line[130:160]
+    for i in range(len(mother)):
+        if i == len(mother) - 2 and mother[i+1] == " ":
+            mother_ends = i
+            break
+
+        if i == len(mother) - 1:
+            mother_ends = i
+            break
+
+        if mother[i+1] == " " and mother[i+2] == " ":  
+            mother_ends = i + 1
+            break
+    mother = mother[:mother_ends]
+    output += mother + " "
+
+    ptotal = line[160:163]
+    if ptotal != "   ":
+        output += ptotal + " "
+
+    percent = line[163:169]
+    if percent != "      ":
+        output += percent
+
+    return output
+
 
 # outputs data not in key-value fashion, converts each entry into a JSON object. 
 def parseHSC(file_path: str, output_file_name: str, output_format: str):
@@ -95,6 +228,9 @@ def parseHSC_New(file_path: str, output_file_name: str, output_format: str):
                 for key, value in record.items():
                     reordered[key] = value
                 record = reordered
+
+                reordered["original_string"] = line
+                reordered["whitespace_string"] = whitespace_name_generation_hsc(line)
 
                 parsed_data.append({seat_no: record})
             except ValueError as e:
@@ -156,6 +292,122 @@ def parse_line_ssc(line: str) -> dict:
         index += width
     return record
 
+def whitespace_name_generation_ssc(line: str) -> str:
+    div = line[0:1]
+    sch = line[1:8]
+    seat = line[8:15]
+    output = div + " " + sch + " " + seat + " "
+
+    name = line[15:80]
+    for i in range(len(name)):
+        if i == len(name) - 2 and name[i+1] == " ":
+            name_ends = i
+            break
+
+        if i == len(name) - 1:
+            name_ends = i
+            break
+
+        if name[i+1] == " " and name[i+2] == " ":  
+            name_ends = i + 1
+            break
+    name = name[:name_ends]
+    output += name + " "
+
+    sub1 = line[80:82]
+    if sub1 != "  ":
+        output += sub1 + " "
+        
+    mark1 = line[82:85]
+    if mark1 != "   ":
+        output += mark1 + " "
+
+    sub2 = line[85:87]
+    if sub2 != "  ":
+        output += sub2 + " "
+
+    mark2 = line[87:90]
+    if mark2 != "   ":
+        output += mark2 + " "
+
+    sub3 = line[90:92]
+    if sub3 != "  ":
+        output += sub3 + " "
+
+    mark3 = line[92:95]
+    if mark3 != "   ":
+        output += mark3 + " "
+
+    sub4 = line[95:97]
+    if sub4 != "  ":
+        output += sub4 + " "
+
+    mark4 = line[97:100]
+    if mark4 != "   ":
+        output += mark4 + " "
+
+    sub5 = line[100:102]
+    if sub5 != "  ":
+        output += sub5 + " "
+
+    mark5 = line[102:105]
+    if mark5 != "   ":
+        output += mark5 + " "
+
+    sub6 = line[105:107]
+    if sub6 != "  ":
+        output += sub6 + " "
+
+    mark6 = line[107:110]
+    if mark6 != "   ":
+        output += mark6 + " "
+
+    total = line[110:113]
+    if total != "   ":
+        output += total + " "
+
+    outof = line[113:116]
+    if outof != "   ":
+        output += outof + " "
+
+    perc = line[116:121]
+    if perc != "     ":
+        output += perc + " "
+
+    result = line[121:122]
+    if result != " ":
+        output += result + " "
+
+    sign = line[122:123]
+    if sign != " ":
+        output += sign + " "
+
+    sport = line[123:125]
+    if sport != "  ":
+        output += sport + " "
+
+    course = line[125:126]
+    if course != " ":
+        output += course + " "
+
+    mother = line[126:156]
+    for i in range(len(mother)):
+        if i == len(mother) - 2 and mother[i+1] == " ":
+            mother_ends = i
+            break
+
+        if i == len(mother) - 1:
+            mother_ends = i
+            break
+
+        if mother[i+1] == " " and mother[i+2] == " ":  
+            mother_ends = i + 1
+            break
+    mother = mother[:mother_ends]
+    output += mother
+
+    return output
+
 # outputs data not in key-value fashion, converts each entry into a JSON object.
 def parseSSC(file_path: str, output_file_name: str, output_format: str):
     start_time = datetime.now()
@@ -212,6 +464,9 @@ def parseSSC_New(file_path: str, output_file_name: str, output_format: str):
                 for key, value in record.items():
                     reordered[key] = value
                 record = reordered
+
+                reordered["original_string"] = line
+                reordered["whitespace_string"] = whitespace_name_generation_ssc(line)
 
                 parsed_data.append({seat_no: record})
             except ValueError as e:
