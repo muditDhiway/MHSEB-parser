@@ -2,8 +2,8 @@ from parser import parseHSC, parseSSC, parseHSC_New, parseSSC_New
 
 if __name__ == "__main__":
     HscOrSsc = "HSC" # can be 'HSC' or 'SSC'
-    input_file = "inputDocs/demo" 
-    output_file_name = "demo"  
+    input_file = "output/generated_entries_hsc_new.txt" 
+    output_file_name = "hsc"  
     output_format = "json" # can be 'json' or 'csv'
 
     if HscOrSsc == "HSC":

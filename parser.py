@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 from datetime import datetime
+from pathlib import Path
 
 # HSC Parsing
 HSC_FIELD_WIDTHS = [
@@ -241,6 +242,9 @@ def parseHSC_New(file_path: str, output_file_name: str, output_format: str):
     if output_format == "json":
         with open(output_file, "w", encoding="utf-8") as f:
             json.dump(parsed_data, f, indent=4)
+
+            redis_output_file = f"output/{output_file_name}_redis"
+            write_redis_resp(parsed_data, redis_output_file)
     else:
         # For CSV: flatten the nested structure
         flat_records = [
@@ -477,6 +481,9 @@ def parseSSC_New(file_path: str, output_file_name: str, output_format: str):
     if output_format == "json":
         with open(output_file, "w", encoding="utf-8") as f:
             json.dump(parsed_data, f, indent=4)
+
+            redis_output_file = f"output/{output_file_name}_redis"
+            write_redis_resp(parsed_data, redis_output_file)
     else:
         # For CSV: flatten the nested structure
         flat_records = [
@@ -491,3 +498,30 @@ def parseSSC_New(file_path: str, output_file_name: str, output_format: str):
     elapsed_time = end_time - start_time
     print(f"Parsing completed in {elapsed_time.total_seconds()} seconds.")
     print(f"Output written to {output_file}")
+
+
+def write_redis_resp(parsed_data, output_path):
+    def to_resp_frame(key: str, val: str) -> str:
+        key_bytes = key.encode("utf-8")
+        val_bytes = val.encode("utf-8")
+        frame = (
+            f"*3\r\n"
+            f"$3\r\nSET\r\n"
+            f"${len(key_bytes)}\r\n{key}\r\n"
+            f"${len(val_bytes)}\r\n{val}"
+        )
+        return frame
+
+    output_path = Path(output_path).with_suffix(".txt")
+    with output_path.open("w", encoding="utf-8") as f:
+        first = True
+        for item in parsed_data:
+            for seat_no, record in item.items():
+                val = json.dumps(record, separators=(",", ":"))  # compact JSON
+                if not first:
+                    f.write("\r\n")
+                first = False
+                frame = to_resp_frame(seat_no, val)
+                f.write(frame)
+
+    print(f"✔ Redis RESP data written to: {output_path}")
